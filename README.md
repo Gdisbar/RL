@@ -1,4 +1,4 @@
-# RL Metrics
+# RPPO logging 🧭
 
 | Category                        | Metric                                           | Meaning                                            | Healthy Range / Watch For     |
 | ------------------------------- | ------------------------------------------------ | -------------------------------------------------- | ----------------------------- |
@@ -28,6 +28,17 @@
 |                                 | `tokens/responses_len_std`                       | Variability                                        | Not exploding                 |
 | 📊 **Log-Probs**                | `objective/logprobs`, `objective/ref_logprobs`   | Log-probs of actions vs. ref                       | Inspect for shifts            |
 
+# Crucial Values to Remember 🚨
+
+| Metric                | Ideal Behavior             | Problem If                |
+| --------------------- | -------------------------- | ------------------------- |
+| `objective/kl`        | Small positive (~0.01–0.1) | Too high → instability    |
+| `ppo/policy/ratio`    | ≈ 1                        | > 200 → over-optimization |
+| `ppo/policy/clipfrac` | < 0.2                      | High → aggressive updates |
+| `ppo/loss/value`      | Stable                     | NaN/spikes → bad critic   |
+| `env/reward_mean`     | Increasing                 | Plateau → stagnation      |
+
+# Core RL Concepts 🧠
 
 | Term                                       | Definition                                                                                 |
 | ------------------------------------------ | ------------------------------------------------------------------------------------------ |
@@ -40,3 +51,15 @@
 | **Clipping (PPO)**                         | Restricts how much the policy ratio can deviate from 1, to avoid destructive updates.      |
 | **GAE (Generalized Advantage Estimation)** | Smoothed advantage estimator balancing bias–variance.                                      |
 | **Explained Variance**                     | Fraction of variance in returns explained by the critic — measures value function quality. |
+
+🧩 TL;DR — What to Remember
+
+Reward mean ↑ → Learning works.
+
+KL small & positive → Stable policy updates.
+
+Entropy ↓ slowly → Controlled exploration to exploitation.
+
+Clipfrac < 0.2, ratio ≈ 1 → PPO updates stable.
+
+Value loss steady, explained variance high → good critic.
