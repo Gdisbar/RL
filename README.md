@@ -1,3 +1,7 @@
+# RL
+
+[RLHF - DPO](https://www.youtube.com/watch?app=desktop&v=aI8cyr-gH6M)
+
 # PPO logging 🧭
 
 | Category                        | Metric                                           | Meaning                                            | Healthy Range / Watch For     |
