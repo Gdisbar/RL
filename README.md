@@ -2,6 +2,8 @@
 
 [RLHF - DPO](https://www.youtube.com/watch?app=desktop&v=aI8cyr-gH6M)
 
+[Trading with RL - PPO](https://www.youtube.com/watch?v=oW4hgB1vIoY)
+
 # PPO logging 🧭
 
 | Category                        | Metric                                           | Meaning                                            | Healthy Range / Watch For     |
