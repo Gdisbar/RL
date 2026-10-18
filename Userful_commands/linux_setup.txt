@@ -1,0 +1,138 @@
+
+
+
+Security
+=======================================================================
+Firewall
+===========
+sudo pacman -Rns $(pacman -Qtdq)
+sudo ufw default deny forward
+sudo pacman -Rns cups-daemon
+sudo ufw default deny incoming
+sudo ufw status numbered
+sudo ufw limit 22/tcp comment 'limit SSH requests'
+sudo ufw reject 23 comment 'Unencrypted port not allowed'
+sudo ufw deny 25 comment 'smtpd/postfix/sendmail Mail Server'
+sudo ufw deny 80/tcp comment 'No HTTP connection'
+sudo ufw deny 143 comment 'IMAP'
+sudo ufw deny 993 comment 'IMAPS'
+sudo ufw deny 110 comment 'POP3'
+sudo ufw deny 995 comment 'POP3S'
+sudo ufw show listening
+sudo systemctl status avahi-daemon
+sudo systemctl stop avahi-daemon
+sudo systemctl disable avahi-daemon
+sudo ufw show builtins
+sudo ufw show listening
+systemctl list-units
+sudo pacman -Rns avhi-daemon
+
+
+Harden /etc/sysctl.conf
+=========================================
+sudo sysctl kernel.modules_disabled=1
+sudo sysctl -a
+sudo sysctl -A
+sudo sysctl mib
+sudo sysctl net.ipv4.conf.all.rp_filter
+sudo sysctl -a --pattern 'net.ipv4.conf.(eth|wlan)0.arp'
+
+Enable fail2ban
+==============================
+sudo pacman -Syu fail2ban
+sudo systemctl enable fail2ban
+sudo systemctl start fail2ban
+
+
+Prevent IP Spoofing
+===================
+cat <<EOF > /etc/host.conf
+order bind,hosts
+multi on
+EOF
+
+block packets that specify a source route /etc/sysctl.conf
+=================================================================
+net.ipv4.conf.default.rp_filter=1
+net.ipv4.conf.all.rp_filter=1
+
+then check the same using
+--------------------------------------------------------
+echo 1 > /proc/sys/net/ipv4/conf/eth0/rp_filter
+echo 1 > /proc/sys/net/ipv4/conf/eth1/rp_filter
+
+or
+
+sysctl -w net.ipv4.conf.eth0.rp_filter=1
+sysctl -w net.ipv4.conf.eth1.rp_filter=1ps
+
+Listening Port
+===================
+sudo netstat -tunlp
+sudo netstat -tulpn | grep :443
+Inside /etc/services -> grep -E -w 'PORT_NUMBER_HERE/(tcp|udp)' /etc/services
+sudo -ss | grep LISTEN
+
+
+Limit memory usage from any program (chrome)
+=======================================================================
+sudo apt-get install cgroup-tools
+
+sudo mkdir -p /sys/fs/cgroup/chrome
+echo $((500 * 1024 * 1024)) | sudo tee /sys/fs/cgroup/chrome/memory.max
+
+systemd-run --user --scope -p MemoryMax=512M \
+env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY \
+/usr/bin/google-chrome-stable
+---------------------------------------------------------------------------
+echo $((1000 * 1024 * 1024)) | sudo tee /sys/fs/cgroup/intellij/memory.max
+
+if using Toolbox , find path : find /opt /home -type f -name "idea.sh" 2>/dev/null
+---------------------------------------------------------------------------------------
+systemd-run --user --scope -p MemoryMax=1000M \
+/home/acro0nix/.local/share/JetBrains/Toolbox/apps/intellij-idea-community-edition/bin/idea.sh
+
+
+firmware update
+=======================================================
+sudo apt-get install fwupd
+sudo systemctl start fwupd.service  # no need to manually enable, static service
+fwupdmgr refresh
+fwupdmgr get-updates
+fwupdmgr get-devices --show-all-devices
+fwupdmgr update
+
+
+remove cups(shared printer discovery)
+----------------------------------------------------------
+sudo systemctl disable --now cups.service
+sudo systemctl disable --now cups-browsed.service
+sudo apt autoremove cups-browsed* cups*
+cat /etc/cups/cupsd.conf
+
+adding repo
+-----------------------------------------
+replace the URLs(gpg key,stable channel) & name(google-chrome) with proper name
+
+curl -fSsL https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/google-chrome.gpg --import
+sudo chmod 644 /etc/apt/trusted.gpg.d/google-chrome.gpg
+echo deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main | sudo tee /etc/apt/sources.list.d/google-chrome.list
+
+
+
+Creating/Deleting virtual environment
+--------------------------------------------------------------------
+acro0nix@local:/etc/apt$ sudo apt-get install python3-venv
+python3-m venv Name-Of-venv
+
+
+Libre-Office
+---------------
+sudo apt autoremove --purge libobasis7.0-libreofficekit-data libreoffice7.0 libreoffice7.0-base libreoffice7.0-calc libreoffice7.0-debian-menus libreoffice7.0-dict-en libreoffice7.0-dict-es libreoffice7.0-dict-fr libreoffice7.0-draw libreoffice7.0-en-us libreoffice7.0-impress libreoffice7.0-math libreoffice7.0-ure libreoffice7.0-writer
+
+
+
+Warning: /snap/bin was not found in your $PATH
+-------------------------------------------------------------------
+echo 'export PATH=$PATH:/snap/bin' >> ~/.bashrc
+open a new terminal --> source ~/.bashrc
