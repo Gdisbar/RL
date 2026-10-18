@@ -1,0 +1,39 @@
+
+Activate Windows
+===================================
+Stop Real-time protection + run below command in PS
+
+irm https://get.activated.win | iex 
+
+
+Activate Virtual Env
+==============================================================
+python -m venv venv ## venv : <environment_name>
+open powershell ---> go to folder containing the Virtual Env
+
+PS E:\Python_PIP\Rasa_Pro_ChatBot>Set-ExecutionPolicy Unrestricted -Scope Process
+PS E:\Python_PIP\Rasa_Pro_ChatBot>Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+PS E:\Python_PIP\Rasa_Pro_ChatBot> .\venv\Scripts\activate
+PS E:\Python_PIP\Rasa_Pro_ChatBot> python.exe -m pip install --upgrade pip
+(virtualenv) PS E:\Python_PIP\Rasa_Pro_ChatBot> deactivate
+
+
+Virtual Environment using uv
+============================================================
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/0.9.4/install.ps1 | iex"
+uv venv + .venv\Scripts\activate
+Remove-Item -Path .venv -Recurse -Force
+uv cache clean
+rm -r "$(uv python dir)"
+rm -r "$(uv tool dir)"
+rm $HOME\.local\bin\uv.exe
+rm $HOME\.local\bin\uvx.exe
+rm $HOME\.local\bin\uvw.exe
+
+
+Quarto commands
+=========================================================================
+quarto render "E:\Testing\GenAI_Notes\Better_Attention_2.ipynb" --to docx
+
+
+
