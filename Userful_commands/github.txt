@@ -1,0 +1,49 @@
+GitHub
+========================================================================
+steps
+---------------
+git init
+git remote add origin https://github.com/Pritam3355/Payment_System.git
+git checkout -b <branch-name>
+git add .
+git commit -m "commit message"
+git push -u origin <branch-name>
+
+Remote repo
+--------------------------------------------------------------------
+remote: Repository not found.
+fatal: repository 'https://github.com/Pritam3355/Payment_System.git/' not found
+
+git remote -v   -> if it's wrong use
+git remote set-url origin https://Pritam3355@github.com/Pritam3355/Payment_System.git  # open credential manager
+
+
+git remote remove origin # Change remote origin
+git remote -v
+
+Remove all local changes (give you the last committed change)
+==========================================================================
+git stash               # Temporarily hides your local changes
+git pull origin <branch>
+git stash pop           # Re-applies your changes
+git clean -fd           # Delete all new (untracked) files
+git status
+git reset --hard origin/version-1 #  point your local branch directly to what is on GitHub
+
+Reset to a particular branch
+================================================================
+git log origin/<branch-name>                      # view-log
+git switch <the-branch-you-want-to-make-change>
+git reset --hard <commit-id-to-be-removed> # last commit
+git push origin version-4 --force             # it will update only the remote, current changes will not be committed
+
+
+Your local branch (main) is behind the remote branch (main) on GitHub
+======================================================================================
+git pull origin main --rebase
+git push origin main
+git push origin main --force
+
+Install pre-commit hooks (using uv)
+=========================================
+pre-commit install --install-hooks

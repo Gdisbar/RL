@@ -1,0 +1,89 @@
+
+Docker
+==============================
+docker compose down   # stop any running container
+docker ps   # get all running process
+netstat -ano | findstr :<port> # port : running docker service
+taskkill /PID <port> /F 
+
+# Clean Docker build cache and rebuild without cache
+========================================================
+docker builder prune -f
+docker compose build --no-cache search_service
+
+# Remove all unused Docker data (caution: removes unused images/containers/volumes)
+==========================================================================================
+docker system prune -a --volumes
+wsl --shutdown
+
+Running Ollama in Docker
+=========================================
+docker pull ollama/ollama
+docker run -p 11434:11434 --name ollama_test ollama/ollama
+docker exec -it ollama_test ollama/ollama
+ollama pull <model-name>
+ollama list
+
+
+Login to Docker container
+===========================================================================================
+docker exec -it search_service bash    # docker exec -it <<container_id>> <running-service-name> 
+docker cp <local_path_to_file> search_service:<path_inside_container>
+
+Docker commands
+=========================================================================
+docker ps               ---> check running containers
+docker run -d --name mysql8 -e MYSQL_ROOT_PASSWORD=Acro#689 -p 3306:3306 mysql:8.0 ---> map host_port(left):docker_port(right)
+docker exec -it mysql8 mysql -u root -p ---> login to MySQL root from cmdlet
+docker compose down --volumes --remove-orphans  --> remove orphan volumes
+docker system prune - remove all stopped containers
+
+Running react.js inside container
+=============================================================================
+docker run -it --rm -v ${PWD}:/app -w /app -p 5173:5173 node:20-alpine sh
+
+
+Docker Set-up MySQL
+========================================================================================================
+(create internal user - only accessible through cmdlet inside docker)
+-----------------------------------------------------------------------------------------
+CREATE USER 'acro0'@'localhost' IDENTIFIED BY 'Acro0$27';
+GRANT ALL PRIVILEGES ON *.* TO 'acro0'@'localhost';
+REVOKE GRANT OPTION ON *.* FROM 'acro0'@'localhost';
+FLUSH PRIVILEGES;
+
+(create external user - only accessible through cmdlet inside docker)
+-----------------------------------------------------------------------------------------
+CREATE USER 'acro0'@'%' IDENTIFIED BY <your_password>;
+GRANT ALL PRIVILEGES ON *.* TO 'acro0'@'%';
+REVOKE GRANT OPTION ON *.* FROM 'acro0'@'%';
+ALTER USER 'acro0'@'%' IDENTIFIED WITH mysql_native_password BY 'Acro0$27'; # doing this for internal user is optional
+FLUSH PRIVILEGES;
+
+
+SELECT User, Host FROM mysql.user WHERE User = 'acro0';
+
+
+docker run -d --name mongodb7 -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=acro0 -e MONGO_INITDB_ROOT_PASSWORD=Acro027 mongo:7.0 --auth
+docker exec -it mongodb mongosh -u acro0 -p Acro027 --authenticationDatabase admin
+docker exec -it <<container_id>> mongosh 
+db.auth("acro0", "Acro027")
+
+single line
+---------------------------------------------------
+db.createUser({               
+  user: "acro0",
+  pwd: "your_password",
+  roles: [
+    { role: "readWrite", db: "industry_database" },
+    { role: "dbAdmin", db: "industry_database" },
+    { role: "readWrite", db: "stock_database" },
+    { role: "dbAdmin", db: "stock_database" }
+  ]
+})
+
+use MongoDB for VS Code extension to connect (don't use special char in passwd)
+
+
+docker compose -f my-compose-file.yml up
+
